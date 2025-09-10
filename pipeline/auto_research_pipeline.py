@@ -9,7 +9,33 @@ License: MIT
 
 Overview
 --------
-Given a CSV of companies (name + domain), the script will:
+Given a CSV of companies (def google_search(query: str) -> List[Tuple[str, str]]:
+    api_key = os.getenv('GOOGLE_API_KEY')
+    cx = os.getenv('GOOGLE_CX')
+    if not api_key or not cx:
+        return []
+    url = 'https://www.googleapis.com/customsearch/v1'
+    params = {'q': query, 'key': api_key, 'cx': cx, 'num': 10}
+    try:
+        r = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
+        r.raise_for_status()
+        data = r.json()
+        items = data.get('items', [])
+        return [(it.get('title','').strip(), it.get('link','').strip()) for it in items]
+    except requests.exceptions.HTTPError as e:
+        if '429' in str(e):
+            print(f"[WARNING] Google API rate limit exceeded. Daily quota likely reached.")
+            print(f"[INFO] You can either:")
+            print(f"  1. Wait until tomorrow for quota reset")
+            print(f"  2. Upgrade to paid Google Custom Search API")
+            print(f"  3. Use a smaller subset of companies for testing")
+            return []
+        else:
+            print(f"[ERROR] Google API error: {e}")
+            return []
+    except Exception as e:
+        print(f"[ERROR] Search failed: {e}")
+        return []n), the script will:
 1) Generate reproducible search queries (Google Custom Search API or Bing Web Search API).
 2) Retrieve top-N URLs per query.
 3) Filter & normalize URLs (same host, de-dup, blocklists, media types).
@@ -67,48 +93,79 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 for d in (RAW_DIR, META_DIR, LOG_DIR, CSV_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
-# Queries per company (edit as needed)
+# Enhanced queries per company (optimized for rate limits and quality)
 QUERY_TEMPLATES = [
-    # Services/products
-    'site:{domain} services OR tuotteet OR palvelut',
-    # Pricing
-    'site:{domain} pricing OR hinnoittelu OR arvopohjainen OR tulosperusteinen',
-    # Blog/news
-    'site:{domain} blog OR uutiset OR ajankohtaista OR news',
-    # References/case studies
-    'site:{domain} references OR referenssit OR asiakastarinat OR case study',
-    # Careers/jobs
-    'site:{domain} careers OR urat OR jobs OR rekry OR työpaikat',
-    # SaaS/productized/hybrid
-    '{company} SaaS OR tuote OR tuotteistus OR productized OR hybrid OR niche',
-    # Outcome/value-based pricing
-    '{company} outcome pricing OR value-based pricing OR tulospohjainen hinnoittelu OR arvopohjainen',
-    # Venture studio/portfolio
-    '{company} venture studio OR portfolio OR portfolioyhtiö',
-    # API/platform/open source
-    '{company} APIOps OR API strategy OR platform OR open source OR avoin lähdekoodi',
-    # Growth/scalable/automation/innovation
-    '{company} growth OR kasvu OR scalable OR skaalautuva OR automation OR automaatio OR innovation OR innovaatiot',
-    # Customer segment/delivery model/value mechanism
-    '{company} customer segment OR asiakassegmentti OR delivery model OR toimitusmalli OR value mechanism OR arvomekanismi',
+    # Core business model queries (highest priority)
+    'site:{domain} "business model" OR "liiketoimintamalli"',
+    'site:{domain} "revenue model" OR "tuottomalli"',
+    'site:{domain} "pricing strategy" OR "hinnoittelustrategia"',
+    'site:{domain} "value proposition" OR "arvolupaus"',
+    
+    # Strategic content pages  
+    'site:{domain} inurl:about "strategy" OR "strategia"',
+    'site:{domain} inurl:services "approach" OR "malli"',
+    'site:{domain} "methodology" OR "menetelmä" OR "lähestymistapa"',
+    
+    # Business model types (company-focused)
+    '{company} "software as a service" OR "SaaS"',
+    '{company} "business model" OR "competitive advantage"',
+    '{company} "platform business" OR "consulting model"',
+    
+    # High-value content
+    'site:{domain} "case study" OR "asiakastarina" OR "referenssi"',
+    'site:{domain} "partnerships" OR "kumppanuudet" OR "integraatiot"'
 ]
 
-# Keywords for snippet extraction (edit as needed)
+# Enhanced keywords for snippet extraction (improved for business model detection)
 EVIDENCE_KEYWORDS = [
-    # English
-    'SaaS','subscription','product','productized','pricing','value-based','outcome','equity','revenue share',
-    'managed service','SRE','APIOps','API','platform','venture','accelerator','nearshore','broker','transparent',
-    'consulting','hybrid','niche','recurring','IP','open source','differentiator','customer segment','geography',
-    'risk sharing','delivery model','value mechanism','case study','reference','portfolio','growth','scalable','automation',
-    # Finnish
-    'tuote','tuotteistus','palvelu','palvelut','hinnoittelu','arvo','arvopohjainen','tulosperusteinen','osakkuus','liikevaihto',
-    'hallinnoitu palvelu','asiakastarina','referenssi','alusta','avoin lähdekoodi','kilpailuetu','asiakassegmentti','toimiala',
-    'riskinjako','toimitusmalli','arvomekanismi','kasvu','skaalautuva','automaatio','yritystarina','sijoittaja','portfolio','innovaatiot'
+    # Business Model Core Terms
+    'business model', 'liiketoimintamalli', 'revenue model', 'tuottomalli',
+    'pricing strategy', 'hinnoittelustrategia', 'value proposition', 'arvolupaus',
+    'competitive advantage', 'kilpailuetu', 'methodology', 'menetelmä',
+    
+    # SaaS & Subscription Models
+    'software as a service', 'SaaS', 'subscription', 'tilaus', 'recurring revenue',
+    'monthly recurring revenue', 'MRR', 'multi-tenant', 'pay-per-user',
+    'cloud-based', 'pilvipalvelu',
+    
+    # Platform & Marketplace
+    'platform business', 'alustatalous', 'two-sided market', 'marketplace',
+    'ecosystem', 'ekosysteemi', 'network effects', 'verkostovaikutus',
+    'API strategy', 'third-party developers', 'integrations', 'integraatiot',
+    
+    # Consulting & Professional Services
+    'custom development', 'räätälöinti', 'bespoke solutions', 'professional services',
+    'consulting', 'konsultointi', 'project-based', 'projektipohjainen',
+    'time and materials', 'implementation', 'toteutus',
+    
+    # Product & Licensing
+    'product strategy', 'tuotestrategia', 'license', 'lisenssi',
+    'perpetual license', 'one-time purchase', 'product sales',
+    
+    # Freemium & Pricing Models
+    'freemium', 'free tier', 'upgrade path', 'premium features',
+    'value-based pricing', 'arvopohjainen hinnoittelu', 'outcome-based',
+    'tulospohjainen', 'performance-based', 'suorituspohjainen',
+    
+    # Service Delivery
+    'service delivery', 'palvelutoimitustapa', 'customer onboarding',
+    'implementation process', 'delivery model', 'toimitusmalli',
+    'customer approach', 'asiakaslähtöisyys', 'customer success',
+    
+    # Partnerships & Growth
+    'partnerships', 'kumppanuudet', 'venture', 'portfolio',
+    'growth strategy', 'kasvustrategia', 'scalable', 'skaalautuva',
+    'automation', 'automaatio', 'innovation', 'innovaatio',
+    
+    # Legacy keywords (keeping some for compatibility)
+    'managed service', 'hallinnoitu palvelu', 'open source', 'avoin lähdekoodi',
+    'differentiation', 'erottautuminen', 'niche', 'markkinarako',
+    'customer segment', 'asiakassegmentti', 'case study', 'asiakastarina'
 ]
 
 MAX_URLS_PER_QUERY = 10
 REQUEST_TIMEOUT = 20  # seconds
-SLEEP_BETWEEN_QUERIES = 1.2  # polite pause
+SLEEP_BETWEEN_QUERIES = 3.0  # increased delay to avoid rate limits
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; PublicResearchBot/1.0; +https://example.org/methods)"
@@ -209,22 +266,101 @@ def extract_pubdate(soup: BeautifulSoup) -> str:
             return c[:10]
     return ''
 
-def extract_snippets(text: str, keywords: List[str], max_len: int = 280, max_snips: int = 3) -> List[str]:
+def extract_snippets(text: str, keywords: List[str], max_len: int = 280, max_snips: int = 3) -> List[Tuple[str, str]]:
+    """Extract meaningful snippets around keywords, returning (snippet, trigger_keyword) tuples"""
+    import re
+    
+    if not text:
+        return []
+    
+    # Split text into sentences using multiple delimiters
+    sentences = re.split(r'[.!?]+\s+', text)
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 20]  # Filter very short fragments
+    
     snips = []
-    low = text.lower()
+    snippet_texts = set()
+    
     for kw in keywords:
-        pos = low.find(kw.lower())
-        if pos != -1:
-            start = max(0, pos - 160)
-            end = min(len(text), pos + 160)
-            chunk = ' '.join(text[start:end].split())
-            if len(chunk) > max_len:
-                chunk = chunk[:max_len-1] + '…'
-            if chunk not in snips:
-                snips.append(chunk)
+        kw_lower = kw.lower()
+        
+        # Find sentences containing the keyword
+        matching_sentences = []
+        for i, sentence in enumerate(sentences):
+            if kw_lower in sentence.lower():
+                # Skip obvious navigation/menu content
+                if is_likely_navigation(sentence):
+                    continue
+                    
+                # Get context: current sentence + surrounding sentences
+                start_idx = max(0, i - 1)
+                end_idx = min(len(sentences), i + 2)
+                context_sentences = sentences[start_idx:end_idx]
+                
+                # Join context and clean up
+                snippet = ' '.join(context_sentences).strip()
+                snippet = clean_snippet(snippet)
+                
+                if len(snippet) >= 30 and snippet not in snippet_texts:  # Ensure meaningful length
+                    matching_sentences.append((snippet, len(snippet)))
+        
+        # Sort by length (prefer longer, more complete content) and take the best
+        matching_sentences.sort(key=lambda x: x[1], reverse=True)
+        
+        for snippet, _ in matching_sentences[:1]:  # Take only the best match per keyword
+            if len(snippet) > max_len:
+                snippet = snippet[:max_len-1] + '…'
+            
+            snippet_texts.add(snippet)
+            snips.append((snippet, kw))
+            
             if len(snips) >= max_snips:
-                break
+                return snips
+    
     return snips
+
+def is_likely_navigation(text: str) -> bool:
+    """Detect navigation menu text and other non-content elements"""
+    text_lower = text.lower()
+    
+    # Common navigation patterns
+    nav_indicators = [
+        'siirry sisältöön', 'avaa valikko', 'sulje valikko', 'skip to content',
+        'main menu', 'navigation', 'sitemap', 'breadcrumb', 'footer',
+        'copyright', '©', 'all rights reserved', 'privacy policy',
+        'cookie policy', 'terms of service', 'contact us'
+    ]
+    
+    # Check for navigation indicators
+    for indicator in nav_indicators:
+        if indicator in text_lower:
+            return True
+    
+    # Check for menu-like patterns (many short words separated by spaces)
+    words = text.split()
+    if len(words) > 8 and sum(len(w) for w in words) / len(words) < 6:  # Average word length < 6
+        return True
+    
+    # Check for repeated menu items pattern
+    if len(set(words)) / len(words) < 0.6 and len(words) > 5:  # Low unique word ratio
+        return True
+        
+    return False
+
+def clean_snippet(text: str) -> str:
+    """Clean and normalize snippet text"""
+    # Remove excessive whitespace
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Remove common artifacts
+    text = re.sub(r'^[0-9\s\-—]+', '', text)  # Leading numbers/dashes
+    text = re.sub(r'^\W+', '', text)  # Leading non-word chars
+    text = re.sub(r'\W+$', '', text)  # Trailing non-word chars
+    
+    # Ensure it starts with a capital letter if it's a sentence
+    if text and text[0].islower() and len(text) > 10:
+        text = text[0].upper() + text[1:]
+    
+    return text.strip()
 
 # ------------------------ Search backends ------------------------
 
@@ -389,9 +525,9 @@ def process_company(row: Dict[str,str]) -> None:
 
         # Emit CSV rows for each snippet (or one empty evidence row if none)
         if not snippets:
-            snippets = [""]
+            snippets = [("", "")]  # (empty_snippet, empty_keyword)
 
-        for snip in snippets:
+        for snip, trigger_keyword in snippets:
             csv_rows.append({
                 "Company": company,
                 "Country": country,
@@ -401,6 +537,7 @@ def process_company(row: Dict[str,str]) -> None:
                 "SourceURL": h.url,
                 "SourceDate": pubdate,
                 "EvidenceQuote": snip,
+                "TriggerKeyword": trigger_keyword,
                 "ModelCategory": "",  # to be coded manually later
                 "RevenueMix": "",
                 "PricingModel": "",
@@ -421,7 +558,7 @@ def process_company(row: Dict[str,str]) -> None:
     # Write consolidated CSV for this company
     out_csv = CSV_DIR / f"{sanitize_filename(company)}_evidence.csv"
     fieldnames = [
-        "Company","Country","Website","SourceType","SourceTitle","SourceURL","SourceDate","EvidenceQuote",
+        "Company","Country","Website","SourceType","SourceTitle","SourceURL","SourceDate","EvidenceQuote","TriggerKeyword",
         "ModelCategory","RevenueMix","PricingModel","ProductizationLevel","RiskSharingLevel","DeliveryModel",
         "IP_OSS_Strategy","Differentiators","HardToCopyFactors","ValueMechanisms","CustomerSegments","Geographies",
         "EvidenceStrength","AnalystConfidence","Notes"
@@ -448,8 +585,31 @@ def main(companies_csv: str):
     # Optional pre-filter: enforce headcount <=100 (if a 'headcount' column exists)
     # rows = [r for r in rows if r.get('headcount') and int(r['headcount']) <= 100]
 
-    for row in rows:
+    print(f"[INFO] Found {len(rows)} companies to process")
+    print(f"[INFO] Each company uses 12 API requests (total: {len(rows) * 12} requests)")
+    
+    for i, row in enumerate(rows, 1):
+        print(f"\n[PROGRESS] Processing company {i}/{len(rows)}")
         process_company(row)
+        
+        # Interactive prompt after each company (except the last one)
+        if i < len(rows):
+            remaining = len(rows) - i
+            remaining_requests = remaining * 12
+            print(f"\n[STATUS] Company {i}/{len(rows)} completed.")
+            print(f"[STATUS] Remaining: {remaining} companies ({remaining_requests} API requests)")
+            
+            while True:
+                response = input("\nContinue to next company? (y/n/q): ").lower().strip()
+                if response in ['y', 'yes']:
+                    break
+                elif response in ['n', 'no', 'q', 'quit']:
+                    print(f"[INFO] Stopping after {i} companies. Resume later by removing processed companies from CSV.")
+                    return
+                else:
+                    print("Please enter 'y' (yes), 'n' (no), or 'q' (quit)")
+    
+    print(f"\n[COMPLETED] All {len(rows)} companies processed successfully!")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
