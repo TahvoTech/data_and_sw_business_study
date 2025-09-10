@@ -1,4 +1,98 @@
-company,domain,country,notes
-Buildercom,buildercom.fi,FI,"example entry; replace with your target companies"
-Sysart,sysart.fi,FI,"example entry"
-Softability,softability.fi,FI,"example entry"
+company,domain,country,notes,itewiki
+Sysart,sysart.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/sysart
+Rakettitiede,rakettitiede.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/rakettitiede
+Haltu,haltu.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/haltu
+Codemate,codemate.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/codemate
+Anders Innovations,anders.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/anders-innovations
+Sofokus,sofokus.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/sofokus
+Taito United,taitounited.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/taito-united
+Montel Intergalactic,montel.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/montel-intergalactic
+Wunderdog,wunderdog.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/wunderdog
+Osaango,osaango.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/osaango
+Maxtech,maxtech.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/maxtech
+E21 Solutions,e21.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/e21-solutions
+Adafy,adafy.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/adafy
+Remion,remion.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/remion
+Valu Digital,valu.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/valu-digital
+Softability Oy,softability.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/softability-oy
+Fingertip,fingertip.org,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/fingertip
+Viskan,viskan.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/viskan
+Optiscan,optiscangroup.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/optiscan
+Espeo Software,espeo.eu,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/espeo-software
+Fraktio,fraktio.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/fraktio
+Gelo,gelo.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/gelo
+Ceon,ceon.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/ceon
+Vertics,vertics.co,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/vertics
+Klopal,klopal.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/klopal
+Masinotek,masinotek.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/masinotek
+Gapps,gappsgroup.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/gapps
+Riimu Solutions,riimusolutions.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/riimu-solutions
+Sofia Digital,sofiadigital.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/sofia-digital
+Inoi,inoi.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/inoi
+Softlandia,softlandia.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/softlandia
+Systencess,systencess.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/systencess
+Apps,apps-oy.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/apps
+Netcorp,netcorp.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/netcorp
+Software Sauna,softwaresauna.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/software-sauna
+Bearit,bearit.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/bearit
+Lifetime,lifetime.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/lifetime
+Codeo,codeo.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/codeo
+Prosys PMS,prosys.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/prosys-pms
+Konsepto,konsepto.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/konsepto
+Superapp,superapp.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/superapp
+Buildercom,buildercom.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/buildercom
+Zure,zure.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/zure
+Codento,codento.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/codento
+Bluugo,bluugo.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/bluugo
+Basen,basen.net,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/basen
+Amplon,amplon.io,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/amplon
+Pandia,pandia.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/pandia
+SW Tech,sw-tech.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/sw-tech
+Intunex,intunex.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/intunex
+Napa,napa.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/napa
+Lukoton Experience,lukoton.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/lukoton-experience
+Pehutec,pehutec.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/pehutec
+Oy Raisoft,raisoft.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/oy-raisoft
+Ada Drive,adadrive.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/ada-drive
+Nyholm Solutions,nyholmsolutions.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/nyholm-solutions
+Orchidea Innovations,orchidea.dev,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/orchidea-innovations
+Circles Consulting,circles.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/circles-consulting
+Lempea,lempea.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/lempea
+Taipuva Consulting,taipuva.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/taipuva-consulting
+Dyme Solutions,dymesolutions.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/dyme-solutions
+Miili Consulting,miiliconsulting.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/miili-consulting
+Advian,advian.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/advian
+Devisioona,devisioona.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/devisioona
+Sovector,sovector.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/sovector
+Symcode,symcode.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/symcode
+Fincet,tool4pro.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/fincet
+Marvel Consulting Group,marvelconsulting.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/marvel-consulting-group
+Nolwenture,nolwenture.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/nolwenture
+Nemesys Ltd,nemesys.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/nemesysltd
+Production Software,smartmes.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/production-software
+Adusso,adusso.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/adusso
+Prove Expertise,prove.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/prove-expertise
+Avoin Systems,avoin.systems,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/avoin-systems
+JSP IT Solutions,jsp-it.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/jsp-it-solutions
+Innovatics,innovatics.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/innovatics
+Jamix,jamix.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/jamix
+Haituva Innovations,innoduel.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/haituva-innovations
+Softico,softico.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/softico
+Tolotech,tolotech.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/tolotech
+Codeline,codeline.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/codeline
+Ferovalo,ferovalo.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/ferovalo
+Aiddo,aiddocs.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/aiddo
+Mediapool,mediapool.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/mediapool
+Weasel Software,weaselsoftware.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/weasel-software
+Poweresta,poweresta.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/poweresta
+Lingonberry Island,lingonberryisland.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/lingonberry-island
+Dtalent Consulting Finland,digitalentconsulting.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/dtalent-consulting-finland
+Leanlab,leanlab.co,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/leanlab
+Amipro Service,amipro.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/amipro-service
+Plan 365,plan-365.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/plan-365
+Funidata,funidata.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/funidata
+Kamoon Digital,kamoon.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/kamoon-digital
+Oy Fision Ltd,fision.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/oy-fision-ltd
+Arvosofta,arvosofta.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/arvosofta
+Work Pilots,workpilots.com,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/work-pilots
+Kinetive,kinetive.fi,FI,"Is part of Software Finland Ry",https://www.itewiki.fi/kinetive

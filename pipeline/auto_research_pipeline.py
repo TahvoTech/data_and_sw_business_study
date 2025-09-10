@@ -45,6 +45,16 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
+# Load environment variables from .env file
+from pathlib import Path
+env_path = Path("../.env")
+if env_path.exists():
+    with open(env_path) as f:
+        for line in f:
+            if line.strip() and not line.startswith('#') and '=' in line:
+                key, value = line.strip().split('=', 1)
+                os.environ[key] = value
+
 # ------------------------ Config ------------------------
 
 OUTPUT_DIR = Path("../out")  # will be created in CWD
@@ -59,23 +69,41 @@ for d in (RAW_DIR, META_DIR, LOG_DIR, CSV_DIR):
 
 # Queries per company (edit as needed)
 QUERY_TEMPLATES = [
-    'site:{domain} services OR tuotteet',
-    'site:{domain} pricing OR hinnoittelu',
-    'site:{domain} blog OR uutiset OR ajankohtaista',
-    'site:{domain} references OR referenssit OR asiakastarinat',
-    'site:{domain} careers OR urat OR jobs',
-    '{company} SaaS',
-    '{company} productized services',
-    '{company} outcome pricing OR value-based pricing OR tulospohjainen hinnoittelu',
-    '{company} venture studio',
-    '{company} APIOps OR API strategy OR platform',
+    # Services/products
+    'site:{domain} services OR tuotteet OR palvelut',
+    # Pricing
+    'site:{domain} pricing OR hinnoittelu OR arvopohjainen OR tulosperusteinen',
+    # Blog/news
+    'site:{domain} blog OR uutiset OR ajankohtaista OR news',
+    # References/case studies
+    'site:{domain} references OR referenssit OR asiakastarinat OR case study',
+    # Careers/jobs
+    'site:{domain} careers OR urat OR jobs OR rekry OR työpaikat',
+    # SaaS/productized/hybrid
+    '{company} SaaS OR tuote OR tuotteistus OR productized OR hybrid OR niche',
+    # Outcome/value-based pricing
+    '{company} outcome pricing OR value-based pricing OR tulospohjainen hinnoittelu OR arvopohjainen',
+    # Venture studio/portfolio
+    '{company} venture studio OR portfolio OR portfolioyhtiö',
+    # API/platform/open source
+    '{company} APIOps OR API strategy OR platform OR open source OR avoin lähdekoodi',
+    # Growth/scalable/automation/innovation
+    '{company} growth OR kasvu OR scalable OR skaalautuva OR automation OR automaatio OR innovation OR innovaatiot',
+    # Customer segment/delivery model/value mechanism
+    '{company} customer segment OR asiakassegmentti OR delivery model OR toimitusmalli OR value mechanism OR arvomekanismi',
 ]
 
 # Keywords for snippet extraction (edit as needed)
 EVIDENCE_KEYWORDS = [
-    'SaaS','subscription','tuote','product','productized','hinnoittelu','pricing',
-    'outcome','value-based','equity','revenue share','managed service','SRE',
-    'APIOps','API','platform','venture','accelerator','nearshore','broker','transparent'
+    # English
+    'SaaS','subscription','product','productized','pricing','value-based','outcome','equity','revenue share',
+    'managed service','SRE','APIOps','API','platform','venture','accelerator','nearshore','broker','transparent',
+    'consulting','hybrid','niche','recurring','IP','open source','differentiator','customer segment','geography',
+    'risk sharing','delivery model','value mechanism','case study','reference','portfolio','growth','scalable','automation',
+    # Finnish
+    'tuote','tuotteistus','palvelu','palvelut','hinnoittelu','arvo','arvopohjainen','tulosperusteinen','osakkuus','liikevaihto',
+    'hallinnoitu palvelu','asiakastarina','referenssi','alusta','avoin lähdekoodi','kilpailuetu','asiakassegmentti','toimiala',
+    'riskinjako','toimitusmalli','arvomekanismi','kasvu','skaalautuva','automaatio','yritystarina','sijoittaja','portfolio','innovaatiot'
 ]
 
 MAX_URLS_PER_QUERY = 10
@@ -200,6 +228,32 @@ def extract_snippets(text: str, keywords: List[str], max_len: int = 280, max_sni
 
 # ------------------------ Search backends ------------------------
 
+def test_google_api() -> bool:
+    """Test if Google API keys are working"""
+    api_key = os.getenv('GOOGLE_API_KEY')
+    cx = os.getenv('GOOGLE_CX')
+    
+    print(f"[TEST] GOOGLE_API_KEY: {'✓ Set' if api_key else '✗ Missing'}")
+    print(f"[TEST] GOOGLE_CX: {'✓ Set' if cx else '✗ Missing'}")
+    
+    if not api_key or not cx:
+        print("[TEST] Missing API keys, search will not work")
+        return False
+    
+    try:
+        # Test with a simple query
+        url = 'https://www.googleapis.com/customsearch/v1'
+        params = {'q': 'test', 'key': api_key, 'cx': cx, 'num': 1}
+        r = requests.get(url, params=params, timeout=10)
+        r.raise_for_status()
+        data = r.json()
+        items = data.get('items', [])
+        print(f"[TEST] API test successful - found {len(items)} results")
+        return True
+    except Exception as e:
+        print(f"[TEST] API test failed: {e}")
+        return False
+
 def google_search(query: str) -> List[Tuple[str,str]]:
     api_key = os.getenv('GOOGLE_API_KEY')
     cx = os.getenv('GOOGLE_CX')
@@ -275,6 +329,7 @@ def parse_html(content: bytes) -> Tuple[str,str,str]:
     return title, pubdate, text
 
 # ------------------------ Main pipeline ------------------------
+
 
 def process_company(row: Dict[str,str]) -> None:
     company = row.get('company','').strip()
@@ -380,6 +435,11 @@ def process_company(row: Dict[str,str]) -> None:
     print(f"[DONE] {company}: {len(csv_rows)} evidence rows -> {out_csv}")
 
 def main(companies_csv: str):
+    # Test API keys first
+    if not test_google_api():
+        print("[ERROR] Google API test failed. Please check your API keys.")
+        return
+    
     # Read companies
     with open(companies_csv, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -396,82 +456,3 @@ if __name__ == "__main__":
         print("Usage: python auto_research_pipeline.py /path/to/companies.csv")
         sys.exit(1)
     main(sys.argv[1])
-
-# Helper: Extract snippet
-def extract_snippet(html, keywords):
-    soup = BeautifulSoup(html, 'html.parser')
-    text = soup.get_text(separator=' ')
-    for kw in keywords:
-        idx = text.lower().find(kw.lower())
-        if idx != -1:
-            start = max(0, idx-100)
-            end = min(len(text), idx+200)
-            return text[start:end]
-    return text[:300]
-
-# Main pipeline
-results = []
-with open(COMPANIES_CSV, newline='', encoding='utf-8') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        company = row['company']
-        domain = row['domain']
-        country = row['country']
-        query = f"{company} site:{domain} business model"
-        try:
-            if SEARCH_TYPE == 'google':
-                items = google_search(query)
-            else:
-                items = bing_search(query)
-        except Exception as e:
-            with open(os.path.join(OUTPUT_LOGS, 'errors.log'), 'a', encoding='utf-8') as log:
-                log.write(f"{datetime.now()} {company}: {e}\n")
-            continue
-        for item in items:
-            url = item.get('link') if SEARCH_TYPE == 'google' else item.get('url')
-            title = item.get('title')
-            snippet = item.get('snippet') if SEARCH_TYPE == 'google' else item.get('snippet', '')
-            try:
-                fname, h, html = fetch_and_hash(url)
-                evidence = extract_snippet(html, ['business model', 'pricing', 'value'])
-            except Exception as e:
-                with open(os.path.join(OUTPUT_LOGS, 'errors.log'), 'a', encoding='utf-8') as log:
-                    log.write(f"{datetime.now()} {company} {url}: {e}\n")
-                continue
-            results.append({
-                'Company': company,
-                'Country': country,
-                'Website': domain,
-                'SourceType': 'Web',
-                'SourceTitle': title,
-                'SourceURL': url,
-                'SourceDate': datetime.now().date(),
-                'EvidenceQuote': evidence,
-                'ModelCategory': '',
-                'RevenueMix': '',
-                'PricingModel': '',
-                'ProductizationLevel': '',
-                'RiskSharingLevel': '',
-                'DeliveryModel': '',
-                'IP_OSS_Strategy': '',
-                'Differentiators': '',
-                'HardToCopyFactors': '',
-                'ValueMechanisms': '',
-                'CustomerSegments': '',
-                'Geographies': '',
-                'EvidenceStrength': '',
-                'AnalystConfidence': '',
-                'Notes': f"SHA256: {h}"
-            })
-
-# Export results
-with open(OUTPUT_CSV, 'w', newline='', encoding='utf-8') as f:
-    writer = csv.DictWriter(f, fieldnames=[
-        'Company','Country','Website','SourceType','SourceTitle','SourceURL','SourceDate','EvidenceQuote','ModelCategory','RevenueMix','PricingModel','ProductizationLevel','RiskSharingLevel','DeliveryModel','IP_OSS_Strategy','Differentiators','HardToCopyFactors','ValueMechanisms','CustomerSegments','Geographies','EvidenceStrength','AnalystConfidence','Notes'])
-    writer.writeheader()
-    writer.writerows(results)
-
-# Log query diary
-with open(os.path.join(OUTPUT_META, 'query_diary.log'), 'a', encoding='utf-8') as log:
-    for row in results:
-        log.write(f"{datetime.now()} {row['Company']} {row['SourceURL']} {row['Notes']}\n")
