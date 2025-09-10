@@ -28,3 +28,4 @@ Yritykset: Software Finland ry jäsenet, henkilöstömäärä enintään 100.
 
 ## Lisenssi
 MIT
+testiu
