@@ -19,7 +19,7 @@ To create a typology and analysis of new business models in Finnish software dev
 
 ### 2. Data Collection
 #### 2.1 Sources
-Only public sources are used:
+Only public sources are used. **For this study, searches are restricted to official company websites (domains listed in companies.csv and Google CSE).**
 - Official company websites (front page, services/products, blog, pricing, careers)
 - Press releases and news from company or media sites
 - Public job postings (LinkedIn, Oikotie, Duunitori)

@@ -5,7 +5,7 @@ This repository contains a reproducible scaffold to automate much of your study:
 “New business models in SMB software development” using **public sources only**.
 
 ## What it does
-- Generates reproducible search queries per company (Google CSE or Bing API).
+- Generates reproducible search queries per company (Google CSE or Bing API), **restricted to company domains only**.
 - Saves top URLs per query, with a **query diary** (JSON logs).
 - Fetches each URL, stores raw HTML/PDF with **SHA256**.
 - Extracts metadata (title, pubdate candidates) and short **evidence snippets** (≤280 chars).
@@ -52,6 +52,7 @@ Always show details
 - Edit `EVIDENCE_KEYWORDS` for snippet extraction.
 - Add allow/deny lists for hosts and file extensions.
 - If you have headcount or membership columns, filter in `main()`.
+- To restrict searches to company sites, ensure all target domains are listed in your Google CSE.
 
 ## Ethics & compliance
 - Use **public sources** only.
