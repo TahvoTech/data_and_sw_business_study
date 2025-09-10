@@ -1,3 +1,7 @@
 out/
 __pycache__/
 *.pyc
+.env
+env/
+auto_research_env/
+.ipynb_checkpoints/
